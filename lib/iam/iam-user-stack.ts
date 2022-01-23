@@ -38,12 +38,15 @@ export class IamUserStack extends Stack {
       iamGroupDict[config["name"]] = this.createIamGroup(this.convertIamGroupConfigToIamGroup(config))
     });
     iamUserConfigs.forEach(config => {
-      this.createIamUser(this.convertIamUserConfigToIamGroup(config, iamGroupDict))
+      this.createIamUser(this.convertIamUserConfigToIamUser(config, iamGroupDict))
     })
   }
 
   createIamUser(iamUser: IIamUser): iam.User {
-    const user = new iam.User(this, iamUser.user, {userName: iamUser.user})
+    const user = new iam.User(this, iamUser.user, {
+      userName: iamUser.user,
+      passwordResetRequired: true
+    })
     iamUser.groups.forEach(group => 
       group.addUser(user)
     )
@@ -67,7 +70,7 @@ export class IamUserStack extends Stack {
     return iamGroup
   }
 
-  convertIamUserConfigToIamGroup(iamConfig: IIamUserConfig, iamGroupDict: {[index: string]: iam.Group}): IIamUser{
+  convertIamUserConfigToIamUser(iamConfig: IIamUserConfig, iamGroupDict: {[index: string]: iam.Group}): IIamUser{
     const iamGroups = new Array<iam.Group>();
     iamConfig.groups.forEach(config => {
         iamGroups.push(iamGroupDict[config])
