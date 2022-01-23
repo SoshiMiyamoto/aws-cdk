@@ -10,6 +10,7 @@ export class InfraStage extends Stage {
     super(scope, id, props);
     const secretsManagerStack = new SecretsManagerStack(this, 'secrets', configs)
     const iamUserStack = new IamUserStack(this, 'iam-user', configs)
+    iamUserStack.addDependency(secretsManagerStack)
   }
 }
 
