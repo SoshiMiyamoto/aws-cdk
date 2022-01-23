@@ -8,7 +8,7 @@ export class Utils  {
   
     static loadConfigs(path: string): Map<string, string> {
         const fileList: string[] = Utils.getFileList(path)
-        const mergeYaml = require('merge-Yaml')
+        const mergeYaml = require('merge-yaml')
         const configs: Map<string, string> = mergeYaml(fileList)
         return configs
     }
