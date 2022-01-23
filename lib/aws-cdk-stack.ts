@@ -22,8 +22,8 @@ export class AwsCdkStack extends Stack {
     // console.debug(this.configs)
 
     const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
-
-    pipeline.addStage(new InfraStage(this, 'dev', this.configs, {
+    const system: string = this.configs["Common"]["systemName"] + this.configs["Common"]["environment"]
+    pipeline.addStage(new InfraStage(this, system, this.configs, {
       env: {
         account: '999511860911',
         region: 'ap-northeast-1',

@@ -1,0 +1,3 @@
+Common:
+  systemName: cdk
+  environment: dev
