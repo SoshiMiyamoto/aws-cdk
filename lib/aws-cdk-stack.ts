@@ -27,7 +27,6 @@ export class AwsCdkStack extends Stack {
     this.accountId = Stack.of(this).account
     this.region = Stack.of(this).region
     console.debug(this.configs)
-    console.debug("region is" + this.region)
 
     const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
     const system: string = this.configs["Common"]["systemName"] + "-" + this.configs["Common"]["environment"]
@@ -53,11 +52,14 @@ export class AwsCdkStack extends Stack {
             'npx cdk synth',
           ],
           input: cdkpipeline.CodePipelineSource.connection(
-            pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
-              connectionArn: 'arn:aws:codestar-connections:' + "ap-northeast-1" + ':' + this.accountId + ':connection/'
-              + pipelineConfig["connectionId"], 
-            }
-          ),
+            // pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
+            //   connectionArn: 'arn:aws:codestar-connections:' + "ap-northeast-1" + ':' + this.accountId + ':connection/'
+            //   + pipelineConfig["connectionId"]
+            // }
+            'SoshiMiyamoto/aws-cdk', 
+            'master', { 
+              connectionArn: 'arn:aws:codestar-connections:ap-northeast-1:999511860911:connection/5e47ba61-ce25-449c-8443-e5fb6825219e'
+            }),
         }),
         selfMutation: true,
       }
