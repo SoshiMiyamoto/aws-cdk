@@ -10,11 +10,10 @@ export class AwsCdkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    this.configs = Utils.loadConfigs("./lib/configs")
+    this.configs  = Utils.loadConfigs("./lib/configs")
 
     console.debug(this.configs)
     // The code that defines your stack goes here
-
     const pipeline = new cdkpipeline.CodePipeline(this, 'pipeline', {
       synth: new cdkpipeline.ShellStep('synth', {
         commands: [
@@ -24,7 +23,7 @@ export class AwsCdkStack extends Stack {
         ],
         input: cdkpipeline.CodePipelineSource.connection(
           'SoshiMiyamoto/aws-cdk','master', {
-            connectionArn: 'arn:aws:codestar-connections:ap-northeast-1:999511860911:connection/5e47ba61-ce25-449c-8443-e5fb6825219e', 
+            connectionArn: 'arn:aws:codestar-connections:ap-northeast-1:999511860911:connection/' + '5e47ba61-ce25-449c-8443-e5fb6825219e', 
           }
         ),
       }),
