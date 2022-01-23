@@ -1,6 +1,7 @@
-import { Stack, StackProps, Stage } from 'aws-cdk-lib';
+import { Stack, StackProps, SecretValue } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
+import { SystemsManager } from '../operation/systemsmanager';
 import { config } from 'process';
 
 
@@ -45,6 +46,7 @@ export class IamUserStack extends Stack {
   createIamUser(iamUser: IIamUser): iam.User {
     const user = new iam.User(this, iamUser.user, {
       userName: iamUser.user,
+      password: SecretValue.secretsManager('iam-initial-password'), 
       passwordResetRequired: true
     })
     iamUser.groups.forEach(group => 

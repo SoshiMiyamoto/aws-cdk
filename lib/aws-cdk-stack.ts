@@ -2,11 +2,13 @@ import { Stack, StackProps, Stage,StageProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as cdkpipeline from 'aws-cdk-lib/pipelines';
 import { IamUserStack } from './iam/iam-user-stack';
+import { SecretsManagerStack } from './security/secretsmanager';
 import { Utils } from './utils'
 
 export class InfraStage extends Stage {
   constructor(scope: Construct, id: string, configs: {[index: string]: any}, props?: StageProps) {
     super(scope, id, props);
+    const secretsManagerStack = new SecretsManagerStack(this, 'secrets', configs)
     const iamUserStack = new IamUserStack(this, 'iam-user', configs)
   }
 }
