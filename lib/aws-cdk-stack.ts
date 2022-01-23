@@ -17,11 +17,15 @@ export class InfraStage extends Stage {
 export class AwsCdkStack extends Stack {
   
   configs: {[index: string]: any} = {};
+  accountId: string = ""
+  region: string = ""
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     this.configs = Utils.loadConfigs("./lib/configs")
+    this.accountId = Stack.of(this).account
+    this.region = Stack.of(this).region
     // console.debug(this.configs)
 
     const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
@@ -49,7 +53,7 @@ export class AwsCdkStack extends Stack {
           ],
           input: cdkpipeline.CodePipelineSource.connection(
             pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
-              connectionArn: 'arn:aws:codestar-connections:ap-northeast-1:999511860911:connection/'
+              connectionArn: 'arn:aws:codestar-connections:' + this.region + ':' + this.accountId + ':connection/'
               + pipelineConfig["connectionId"], 
             }
           ),
