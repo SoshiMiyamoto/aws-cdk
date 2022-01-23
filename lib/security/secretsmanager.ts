@@ -17,7 +17,6 @@ export class SecretsManagerStack extends Stack {
     this.secretConfigs = configs["SecretsManager"]
 
     this.secretConfigs.forEach(config => {
-      console.debug(config)
       this.createSecrets(config)
     })
   }

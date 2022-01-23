@@ -26,7 +26,8 @@ export class AwsCdkStack extends Stack {
     this.configs = Utils.loadConfigs("./lib/configs")
     this.accountId = Stack.of(this).account
     this.region = Stack.of(this).region
-    // console.debug(this.configs)
+    console.debug(this.configs)
+    console.debug("region is" + this.region)
 
     const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
     const system: string = this.configs["Common"]["systemName"] + "-" + this.configs["Common"]["environment"]
@@ -53,7 +54,7 @@ export class AwsCdkStack extends Stack {
           ],
           input: cdkpipeline.CodePipelineSource.connection(
             pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
-              connectionArn: 'arn:aws:codestar-connections:' + this.region + ':' + this.accountId + ':connection/'
+              connectionArn: 'arn:aws:codestar-connections:' + "ap-northeast-1" + ':' + this.accountId + ':connection/'
               + pipelineConfig["connectionId"], 
             }
           ),

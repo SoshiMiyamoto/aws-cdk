@@ -30,7 +30,6 @@ export class IamUserStack extends Stack {
   constructor(scope: Construct, id: string, configs: {[index: string]: any[]}, props?: StackProps) {
     super(scope, id, props);
     
-    console.debug(configs)
     const iamGroupConfigs = configs["IamGroup"];
     const iamUserConfigs = configs["IamUser"];
 
