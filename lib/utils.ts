@@ -1,15 +1,14 @@
 import * as fs from "fs"
 import * as path from "path"
 //import * as mergeYaml from "merge-yaml"
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+
 
 export class Utils  {
   
-    static loadConfigs(path: string): Map<string, string> {
+    static loadConfigs(path: string): {[index: string]: any} {
         const fileList: string[] = Utils.getFileList(path)
         const mergeYaml = require('merge-yaml')
-        const configs: Map<string, string> = mergeYaml(fileList)
+        const configs: {[index: string]: any} = mergeYaml(fileList)
         return configs
     }
 

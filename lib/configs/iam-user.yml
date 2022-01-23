@@ -1,0 +1,11 @@
+IamGroup:
+  - name: AdministratorGroup
+    managedPolices:
+      - AdministratorAccess
+
+IamUser:
+  - name: soshi.miyamoto
+    groups: 
+      - AdministratorGroup
+
+
