@@ -39,7 +39,7 @@ export class AwsCdkStack extends Stack {
     // The code that defines your stack goes here
     const pipeline = new cdkpipeline.CodePipeline(
       this, 
-      pipelineConfig["Name"], 
+      pipelineConfig["name"], 
       {
         synth: new cdkpipeline.ShellStep('synth', {
           commands: [
@@ -48,9 +48,9 @@ export class AwsCdkStack extends Stack {
             'npx cdk synth',
           ],
           input: cdkpipeline.CodePipelineSource.connection(
-            'SoshiMiyamoto/aws-cdk','master', {
+            pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
               connectionArn: 'arn:aws:codestar-connections:ap-northeast-1:999511860911:connection/'
-              + pipelineConfig["ConnectionId"], 
+              + pipelineConfig["connectionId"], 
             }
           ),
         }),
