@@ -29,13 +29,13 @@ export class AwsCdkStack extends Stack {
     console.debug(this.configs)
 
     const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
-    const system: string = this.configs["Common"]["systemName"] + "-" + this.configs["Common"]["environment"]
-    pipeline.addStage(new InfraStage(this, system, this.configs, {
-      env: {
-        account: '999511860911',
-        region: 'ap-northeast-1',
-      }
-    }));
+    // const system: string = this.configs["Common"]["systemName"] + "-" + this.configs["Common"]["environment"]
+    // pipeline.addStage(new InfraStage(this, system, this.configs, {
+    //   env: {
+    //     account: '999511860911',
+    //     region: 'ap-northeast-1',
+    //   }
+    // }));
     
   }
 
@@ -52,14 +52,11 @@ export class AwsCdkStack extends Stack {
             'npx cdk synth',
           ],
           input: cdkpipeline.CodePipelineSource.connection(
-            // pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
-            //   connectionArn: 'arn:aws:codestar-connections:' + "ap-northeast-1" + ':' + this.accountId + ':connection/'
-            //   + pipelineConfig["connectionId"]
-            // }
-            'SoshiMiyamoto/aws-cdk', 
-            'master', { 
-              connectionArn: 'arn:aws:codestar-connections:ap-northeast-1:999511860911:connection/5e47ba61-ce25-449c-8443-e5fb6825219e'
-            }),
+            pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
+              connectionArn: 'arn:aws:codestar-connections:' + "ap-northeast-1" + ':' + this.accountId + ':connection/'
+              + pipelineConfig["connectionId"]
+            }
+          ),
         }),
         selfMutation: true,
       }
