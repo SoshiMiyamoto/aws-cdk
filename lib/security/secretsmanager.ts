@@ -10,6 +10,7 @@ export interface ISecret {
 export class SecretsManagerStack extends Stack {
 
   secretConfigs: ISecret[] = []
+  system: string
   
   constructor(scope: Construct, id: string, configs: {[index: string]: any[]}, props?: StackProps) {
     super(scope, id, props);
@@ -17,10 +18,21 @@ export class SecretsManagerStack extends Stack {
     this.secretConfigs = configs["SecretsManager"]
 
     this.secretConfigs.forEach(config => {
-      this.createSecrets(config)
+      this.createIamUserSecret(config)
     })
   }
 
+  createIamUserSecret(secretConfig: ISecret): secretsmanager.Secret {
+    const secret = new secretsmanager.Secret(this, secretConfig.name, {
+      secretName: secretConfig.name,
+      generateSecretString:  {
+        secretStringTemplate: '{}',
+        generateStringKey: 'password',
+      },
+    })
+    return secret
+  }
+  
   createSecrets(secretConfig: ISecret): secretsmanager.Secret {
     const secret = new secretsmanager.Secret(this, secretConfig.name, {
       secretName: secretConfig.name,

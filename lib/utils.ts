@@ -8,7 +8,8 @@ export class Utils  {
     static loadConfigs(path: string): {[index: string]: any} {
         const fileList: string[] = Utils.getFileList(path)
         const mergeYaml = require('merge-yaml')
-        const configs: {[index: string]: any} = mergeYaml(fileList)
+        var configs: {[index: string]: any} = mergeYaml(fileList)
+        configs["system"] = configs["Common"]["systemName"] + "-" + configs["Common"]["environment"]
         return configs
     }
 
