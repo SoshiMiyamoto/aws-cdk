@@ -1,43 +1,50 @@
 import { Stack, StackProps, Stage,StageProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as cdkpipeline from 'aws-cdk-lib/pipelines';
+import { Pass } from 'aws-cdk-lib/aws-stepfunctions';
+import config = require('config')
+import { debug } from 'console';
 import { IamUserStack } from './iam/iam-user-stack';
 import { SecretsManagerStack } from './security/secretsmanager';
-import { Utils } from './utils'
 
 export class InfraStage extends Stage {
-  constructor(scope: Construct, id: string, configs: {[index: string]: any}, props?: StageProps) {
+  constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props);
-    const secretsManagerStack = new SecretsManagerStack(this, 'secrets', configs)
-    const iamUserStack = new IamUserStack(this, 'iam-user', configs)
-    iamUserStack.addDependency(secretsManagerStack)
+    const secretsManagerStack = new SecretsManagerStack(this, 'secrets')
+    //const iamUserStack = new IamUserStack(this, 'iam-user', configs)
+    //iamUserStack.addDependency(secretsManagerStack)
   }
 }
 
 export class AwsCdkStack extends Stack {
-  
-  configs: {[index: string]: any} = {};
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    this.configs = Utils.loadConfigs("./lib/configs")
-    console.debug(this.configs)
+    // if (this.account.toString() == scope.node.tryGetContext('accounts')["prod"]["id"]){
+    //   process.env.NODE_ENV = "prod"
+    // }
+    // else {
+    //   process.env.NODE_ENV = "dev"
+    // }
 
-    const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
-    pipeline.addStage(new InfraStage(this, this.configs["system"], this.configs, {
+    
+    // const pipeline = this.createCdkPieline(this.configs["CodePipeline"])
+    console.debug(config)
+    const pipeline = this.createCdkPieline()
+    pipeline.addStage(new InfraStage(this, config.get('Common.systemName'), {
       env: {
         account: this.account,
         region: this.region,
       }
     })); 
   }
-
-  createCdkPieline(pipelineConfig: {[index: string]: any}): cdkpipeline.CodePipeline {
+  
+  createCdkPieline(): cdkpipeline.CodePipeline {
     // The code that defines your stack goes here
     const pipeline = new cdkpipeline.CodePipeline(
       this, 
-      pipelineConfig["name"], 
+      config.get('CodePipeline.name'), 
       {
         synth: new cdkpipeline.ShellStep('synth', {
           commands: [
@@ -46,9 +53,9 @@ export class AwsCdkStack extends Stack {
             'npx cdk synth',
           ],
           input: cdkpipeline.CodePipelineSource.connection(
-            pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
+            config.get('CodePipeline.owner') + "/" + config.get('CodePipeline.repository'), config.get('CodePipeline.branch'), {
               connectionArn: 'arn:' + this.partition + ':codestar-connections:' + this.region + ':' + this.account + ':connection/'
-              + pipelineConfig["connectionId"]
+              + config.get('CodePipeline.connectionId')
             }
           ),
         }),
@@ -57,4 +64,28 @@ export class AwsCdkStack extends Stack {
     );
     return pipeline
   }
+  // createCdkPieline(pipelineConfig: {[index: string]: any}): cdkpipeline.CodePipeline {
+  //   // The code that defines your stack goes here
+  //   const pipeline = new cdkpipeline.CodePipeline(
+  //     this, 
+  //     pipelineConfig["name"], 
+  //     {
+  //       synth: new cdkpipeline.ShellStep('synth', {
+  //         commands: [
+  //           'npm ci',
+  //           'npm run build',
+  //           'npx cdk synth',
+  //         ],
+  //         input: cdkpipeline.CodePipelineSource.connection(
+  //           pipelineConfig["owner"] + "/" + pipelineConfig["repository"], pipelineConfig["branch"], {
+  //             connectionArn: 'arn:' + this.partition + ':codestar-connections:' + this.region + ':' + this.account + ':connection/'
+  //             + pipelineConfig["connectionId"]
+  //           }
+  //         ),
+  //       }),
+  //       selfMutation: true,
+  //     }
+  //   );
+  //   return pipeline
+  // }
 }
