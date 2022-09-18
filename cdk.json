@@ -25,6 +25,14 @@
     "@aws-cdk/core:target-partitions": [
       "aws",
       "aws-cn"
-    ]
+    ],
+    "account": {
+      "dev": {
+        "id": "999511860911"
+      },
+      "prod": {
+        "id": "XXXXXXXXXXXX"
+      }
+  }
   }
 }
