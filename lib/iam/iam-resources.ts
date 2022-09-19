@@ -1,5 +1,4 @@
-import { Stack, StackProps, SecretValue} from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib/core';
+import { Stack, StackProps, SecretValue, Tags} from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import config = require('config')
@@ -82,7 +81,7 @@ export class IamResourceStack extends Stack {
         })]
       })]
     });
-    cdk.Tags.of(role).add("Div", groupName)
+    Tags.of(role).add("Div", groupName)
     return role
   }
 
