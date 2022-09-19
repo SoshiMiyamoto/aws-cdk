@@ -41,6 +41,10 @@ export class IamResourceStack extends Stack {
     // groups.forEach(config => {
     //   console.debug(config)
     // });
+    Object.entries(iamUserAdditionConfigs).forEach(([key, value]) => {
+      console.log(key);
+      console.log(value);
+    });
 
     const iamGroupDict: {[index: string]: iam.Group} = {}
     iamGroupConfigs.forEach(config => {
@@ -56,7 +60,7 @@ export class IamResourceStack extends Stack {
   createIamUser(iamUserName: string): iam.User {
     const user = new iam.User(this, iamUserName, {
       userName: iamUserName,
-      password: SecretValue.plainText("test"),
+      password: SecretValue.plainText("Test1234"),
       passwordResetRequired: true
     })
     return user
