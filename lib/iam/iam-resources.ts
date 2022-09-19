@@ -32,7 +32,11 @@ export class IamResourceStack extends Stack {
     
     const iamGroupConfigs: string[] =  config.get("iam.group");
     const iamUserConfigs: string[]  = config.get("iam.user");
-    const iamUserAdditionConfigs: string[]  = config.get("iam.addition");
+    const iamUserAdditionConfigs: {[index: string]: string}  = config.get("iam.addition");
+    // const groups = iamUserAdditionConfigs.
+    // groups.forEach(config => {
+    //   console.debug(config)
+    // });
 
     const iamGroupDict: {[index: string]: iam.Group} = {}
     iamGroupConfigs.forEach(config => {
