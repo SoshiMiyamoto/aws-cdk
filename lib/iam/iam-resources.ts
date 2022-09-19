@@ -32,6 +32,7 @@ export class IamResourceStack extends Stack {
     
     const iamGroupConfigs: string[] =  config.get("iam.group");
     const iamUserConfigs: string[]  = config.get("iam.user");
+    const iamUserAdditionConfigs: string[]  = config.get("iam.addition");
 
     const iamGroupDict: {[index: string]: iam.Group} = {}
     iamGroupConfigs.forEach(config => {
@@ -62,11 +63,11 @@ export class IamResourceStack extends Stack {
   }
 
   createIamRoleForGroup(groupName: string): iam.Role {
-    const role = new iam.Role(this, 'Role', {
+    const role = new iam.Role(this, `${groupName}Role`, {
       assumedBy: new iam.AccountPrincipal(this.account),
       description: 'for group',
       roleName: `${groupName}Role`,
-      managedPolicies: [new iam.ManagedPolicy(this, `${groupName}Role`, {
+      managedPolicies: [new iam.ManagedPolicy(this, `${groupName}RoleManagedPolicy`, {
         managedPolicyName: `${groupName}RoleManagedPolicy`,
         statements: [new iam.PolicyStatement({
           actions: ['s3:getObject', 's3:ListBucket'],
@@ -83,7 +84,7 @@ export class IamResourceStack extends Stack {
 
   createIamGroupToAssumeRole(groupName: string, role: iam.Role): IIamGroup {
     const policies = new Array<iam.IManagedPolicy>();
-    policies.push(new iam.ManagedPolicy(this, groupName, {
+    policies.push(new iam.ManagedPolicy(this, `${groupName}ManagedPolicy`, {
       managedPolicyName: `${groupName}ManagedPolicy`,
       statements: [new iam.PolicyStatement({
         actions: ['sts:AssumeRole'],
