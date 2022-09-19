@@ -29,6 +29,7 @@ export class IamResourceStack extends Stack {
       const mainGroup = group.split("/")[0]
       const subGroup = group.split("/")[1]
       const iamRole = this.createIamRoleForGroup(mainGroup, subGroup)
+      group = `${mainGroup}-${subGroup}`
       const iamGroup = this.createIamGroup(this.createIamGroupToAssumeRole(group, iamRole))
       users.forEach(user => {
         if(!iamUserNameList.includes(user)){
