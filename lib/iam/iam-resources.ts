@@ -99,7 +99,7 @@ export class IamResourceStack extends Stack {
 
   createS3Bucket(name: string): s3.Bucket {
     const s3bucket = new s3.Bucket(this, `s3Bucket${name}`, {
-      bucketName: `gr-${name}`,
+      bucketName: name,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
