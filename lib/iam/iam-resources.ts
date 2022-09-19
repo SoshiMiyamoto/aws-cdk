@@ -9,6 +9,11 @@ export interface IIamUser {
   groups: iam.Group[]
 }
 
+export interface IGroupAddition {
+  group: string
+  user: iam.User[]
+}
+
 export interface IIamGroup {
   groupName: string
   policies: iam.IManagedPolicy[]
@@ -31,8 +36,8 @@ export class IamResourceStack extends Stack {
     
     const iamGroupConfigs: string[] =  config.get("iam.group");
     const iamUserConfigs: string[]  = config.get("iam.user");
-    const iamUserAdditionConfigs: {[index: string]: string}  = config.get("iam.addition");
-    // const groups = iamUserAdditionConfigs.
+    const iamUserAdditionConfigs: {[index: string]: string[]}  = config.get("iam.addition");
+    // const groups = iamUserAdditionConfigs.keys()
     // groups.forEach(config => {
     //   console.debug(config)
     // });
@@ -75,8 +80,8 @@ export class IamResourceStack extends Stack {
         statements: [new iam.PolicyStatement({
           actions: ['s3:getObject', 's3:ListBucket'],
           resources: [
-            "gr-${aws:PrincipalTag/Div}-*",
-            "gr-${aws:PrincipalTag/Div}-*/*"
+            "arn:aws:s3:::gr-${aws:PrincipalTag/Div}-*",
+            "arn:aws:s3:::gr-${aws:PrincipalTag/Div}-*/*"
           ],
         })]
       })]
