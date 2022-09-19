@@ -70,13 +70,17 @@ export class IamResourceStack extends Stack {
       managedPolicies: [new iam.ManagedPolicy(this, `${groupName}RoleManagedPolicy`, {
         managedPolicyName: `${groupName}RoleManagedPolicy`,
         statements: [new iam.PolicyStatement({
-          actions: ['s3:getObject', 's3:ListBucket'],
+          actions: ['s3:getObject'],
           resources: ["*"],
           conditions: {
             StringEquals:{
               "aws:ResourceTag/Div": "aws:PrincipalTag/Div"
             }
           }
+        }),
+        new iam.PolicyStatement({
+          actions: ['s3:ListBucket', "s3:ListAllMyBuckets"],
+          resources: ["*"]
         })]
       })]
     });
