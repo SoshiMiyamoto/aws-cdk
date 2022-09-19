@@ -25,7 +25,7 @@ export interface IIamUserConfig{
   groups: string[]
 }
 
-export class IamUserStack extends Stack {
+export class IamResourceStack extends Stack {
   
   constructor(scope: Construct, id: string,  props?: StackProps) {
     super(scope, id, props);

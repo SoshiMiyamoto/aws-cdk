@@ -4,14 +4,15 @@ import * as cdkpipeline from 'aws-cdk-lib/pipelines';
 import { Pass } from 'aws-cdk-lib/aws-stepfunctions';
 import config = require('config')
 import { debug } from 'console';
-import { IamUserStack } from './iam/iam-user-stack';
+import { IamResourceStack } from './iam/iam-resources';
 import { SecretsManagerStack } from './security/secretsmanager';
 
 export class InfraStage extends Stage {
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props);
-    const secretsManagerStack = new SecretsManagerStack(this, 'secrets')
+    //const secretsManagerStack = new SecretsManagerStack(this, 'secrets')
     //const iamUserStack = new IamUserStack(this, 'iam-user', configs)
+    const iamUserStack = new IamResourceStack(this, 'iam-resource')
     //iamUserStack.addDependency(secretsManagerStack)
   }
 }
