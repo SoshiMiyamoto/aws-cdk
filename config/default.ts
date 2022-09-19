@@ -11,5 +11,26 @@ export = {
     },
     "SecretsManager": [{
         "name": "iam-initial-password"
-    }]
+    }],
+    "iam":{
+        "group":[
+            "GroupA",
+            "GroupB"
+        ],
+        "user":[
+            "test.miyamotoA",
+            "test.miyamotoB",
+            "test.miyamotoAB"
+        ],
+        "addition":{
+            "GroupA":[
+                "test.miyamotoA",
+                "test.miyamotoAB"
+            ],
+            "GroupB":[
+                "test.miyamotoB",
+                "test.miyamotoAB"
+            ]
+        }
+    }
 }
