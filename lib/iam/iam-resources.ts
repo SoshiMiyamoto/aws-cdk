@@ -1,4 +1,4 @@
-import { Stack, StackProps, SecretValue, Tags} from 'aws-cdk-lib';
+import { Stack, StackProps, SecretValue, Tags, Tag} from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3'
 import { Construct } from 'constructs';
@@ -58,6 +58,7 @@ export class IamResourceStack extends Stack {
       groupName: iamGroup.groupName,
       managedPolicies: iamGroup.policies
     });
+    Tags.of(group).add("Div",iamGroup.groupName)
     return group
   }
 
@@ -70,10 +71,12 @@ export class IamResourceStack extends Stack {
         managedPolicyName: `${groupName}RoleManagedPolicy`,
         statements: [new iam.PolicyStatement({
           actions: ['s3:getObject', 's3:ListBucket'],
-          resources: [
-            "arn:aws:s3:::gr-${aws:PrincipalTag/Div}-*",
-            "arn:aws:s3:::gr-${aws:PrincipalTag/Div}-*/*"
-          ],
+          resources: ["*"],
+          conditions: {
+            StringEquals:{
+              "aws:ResourceTag/Div": "aws:PrincipalTag/Div"
+            }
+          }
         })]
       })]
     });
@@ -102,6 +105,7 @@ export class IamResourceStack extends Stack {
       enforceSSL: true,
       versioned: true
     });
+    Tags.of(s3bucket).add("Div", name)
     return s3bucket
   }
 }
