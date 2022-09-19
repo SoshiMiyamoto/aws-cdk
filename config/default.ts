@@ -14,11 +14,11 @@ export = {
     }],
     "iam":{
         "group":{
-            "GroupA":[
+            "group-a":[
                 "test.miyamotoA",
                 "test.miyamotoAB"
             ],
-            "GroupB":[
+            "group-b":[
                 "test.miyamotoB",
                 "test.miyamotoAB"
             ]
