@@ -10,7 +10,7 @@ export interface IIamUser {
 }
 
 export interface IGroupAddition {
-  group: string
+  group: iam.Group
   user: iam.User[]
 }
 
@@ -19,43 +19,28 @@ export interface IIamGroup {
   policies: iam.IManagedPolicy[]
 }
 
-export interface IIamGroupConfig{
-  name: string
-  managedPolices: string[]
-}
-
-export interface IIamUserConfig{
-  name: string
-  groups: string[]
-}
 
 export class IamResourceStack extends Stack {
   
   constructor(scope: Construct, id: string,  props?: StackProps) {
     super(scope, id, props);
     
-    const iamGroupConfigs: string[] =  config.get("iam.group");
-    const iamUserConfigs: string[]  = config.get("iam.user");
-    const iamUserAdditionConfigs: {[index: string]: string[]}  = config.get("iam.addition");
-    // const groups = iamUserAdditionConfigs.keys()
-    // groups.forEach(config => {
-    //   console.debug(config)
-    // });
-    Object.entries(iamUserAdditionConfigs).forEach(([key, value]) => {
-      console.log(key);
-      console.log(value);
+    var iamUserNameList: string[] = []
+    const iamUserGroupConfigs: {[index: string]: string[]}  = config.get("iam.group");
+    Object.entries(iamUserGroupConfigs).forEach(([group, users]) => {
+      const iamRole = this.createIamRoleForGroup(group)
+      const iamGroup = this.createIamGroup(this.createIamGroupToAssumeRole(group, iamRole))
+      users.forEach(user => {
+        if(!iamUserNameList.includes(user)){
+          const iamUser = this.createIamUser(user)
+          iamUserNameList.push(user)
+          iamGroup.addUser(iamUser)
+        }else{
+          iamGroup.addUser(iam.User.fromUserName(this, `${user}Name`, user))
+        }
+      })
     });
-
-    const iamGroupDict: {[index: string]: iam.Group} = {}
-    iamGroupConfigs.forEach(config => {
-      const iamRole = this.createIamRoleForGroup(config)
-      const iamGroup = this.createIamGroup(this.createIamGroupToAssumeRole(config, iamRole))
-    });
-    iamUserConfigs.forEach(config => {
-      this.createIamUser(config)
-    })
   }
-
 
   createIamUser(iamUserName: string): iam.User {
     const user = new iam.User(this, iamUserName, {
@@ -104,24 +89,6 @@ export class IamResourceStack extends Stack {
       })]
     }))
     const iamGroup: IIamGroup = {groupName: groupName, policies: policies}
-    return iamGroup
-  }
-
-  convertIamGroupConfigToIamGroup(iamConfig: IIamGroupConfig): IIamGroup{
-    const policies = new Array<iam.IManagedPolicy>();
-    iamConfig.managedPolices.forEach(config => {
-        policies.push(iam.ManagedPolicy.fromAwsManagedPolicyName(config))
-    });
-    const iamGroup: IIamGroup = {groupName: iamConfig.name, policies: policies}
-    return iamGroup
-  }
-
-  convertIamUserConfigToIamUser(iamConfig: IIamUserConfig, iamGroupDict: {[index: string]: iam.Group}): IIamUser{
-    const iamGroups = new Array<iam.Group>();
-    iamConfig.groups.forEach(config => {
-        iamGroups.push(iamGroupDict[config])
-    });
-    const iamGroup: IIamUser = {user: iamConfig.name, groups: iamGroups}
     return iamGroup
   }
 }
