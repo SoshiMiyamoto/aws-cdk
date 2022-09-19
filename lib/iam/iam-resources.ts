@@ -26,6 +26,8 @@ export class IamResourceStack extends Stack {
   constructor(scope: Construct, id: string,  props?: StackProps) {
     super(scope, id, props);
     
+    this.createS3Bucket("test-miyamoto-bucket")
+
     var iamUserNameList: string[] = []
     const iamUserGroupConfigs: {[index: string]: string[]}  = config.get("iam.group");
     Object.entries(iamUserGroupConfigs).forEach(([group, users]) => {
@@ -40,7 +42,6 @@ export class IamResourceStack extends Stack {
           iamGroup.addUser(iam.User.fromUserName(this, `${user}Name`, user))
         }
       })
-      this.createS3Bucket(group)
     });
   }
 
@@ -71,12 +72,7 @@ export class IamResourceStack extends Stack {
         managedPolicyName: `${groupName}RoleManagedPolicy`,
         statements: [new iam.PolicyStatement({
           actions: ['s3:getObject'],
-          resources: ["*"],
-          conditions: {
-            StringEquals:{
-              "aws:ResourceTag/Div": "aws:PrincipalTag/Div"
-            }
-          }
+          resources: ["arn:aws:s3:::test-miyamoto-bucket/${aws:PrincipalTag/Div}/*"]
         }),
         new iam.PolicyStatement({
           actions: ['s3:ListBucket', "s3:ListAllMyBuckets"],
