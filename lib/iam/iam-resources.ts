@@ -1,5 +1,6 @@
 import { Stack, StackProps, SecretValue, Tags} from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as s3 from 'aws-cdk-lib/aws-s3'
 import { Construct } from 'constructs';
 import config = require('config')
 import { StackTagsMetadataEntry } from 'aws-cdk-lib/cloud-assembly-schema';
@@ -39,6 +40,7 @@ export class IamResourceStack extends Stack {
           iamGroup.addUser(iam.User.fromUserName(this, `${user}Name`, user))
         }
       })
+      this.createS3Bucket(group)
     });
   }
 
@@ -90,5 +92,16 @@ export class IamResourceStack extends Stack {
     }))
     const iamGroup: IIamGroup = {groupName: groupName, policies: policies}
     return iamGroup
+  }
+
+  createS3Bucket(name: string): s3.Bucket {
+    const s3bucket = new s3.Bucket(this, `s3Bucket${name}`, {
+      bucketName: `gr-${name}`,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      versioned: true
+    });
+    return s3bucket
   }
 }

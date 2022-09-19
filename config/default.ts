@@ -13,11 +13,6 @@ export = {
         "name": "iam-initial-password"
     }],
     "iam":{
-        "user":[
-            "test.miyamotoA",
-            "test.miyamotoB",
-            "test.miyamotoAB"
-        ],
         "group":{
             "GroupA":[
                 "test.miyamotoA",
