@@ -10,11 +10,6 @@ export interface IIamUser {
   groups: iam.Group[]
 }
 
-export interface IGroupAddition {
-  group: iam.Group
-  user: iam.User[]
-}
-
 export interface IIamGroup {
   groupName: string
   policies: iam.IManagedPolicy[]
@@ -31,7 +26,9 @@ export class IamResourceStack extends Stack {
     var iamUserNameList: string[] = []
     const iamUserGroupConfigs: {[index: string]: string[]}  = config.get("iam.group");
     Object.entries(iamUserGroupConfigs).forEach(([group, users]) => {
-      const iamRole = this.createIamRoleForGroup(group)
+      const mainGroup = group.split("/")[0]
+      const subGroup = group.split("/")[1]
+      const iamRole = this.createIamRoleForGroup(mainGroup, subGroup)
       const iamGroup = this.createIamGroup(this.createIamGroupToAssumeRole(group, iamRole))
       users.forEach(user => {
         if(!iamUserNameList.includes(user)){
@@ -59,20 +56,23 @@ export class IamResourceStack extends Stack {
       groupName: iamGroup.groupName,
       managedPolicies: iamGroup.policies
     });
-    Tags.of(group).add("Div",iamGroup.groupName)
+    //Tags.of(group).add("Div",iamGroup.groupName)
     return group
   }
 
-  createIamRoleForGroup(groupName: string): iam.Role {
-    const role = new iam.Role(this, `${groupName}Role`, {
+  createIamRoleForGroup(groupName: string, subGroupName: string = ""): iam.Role {
+    const role = new iam.Role(this, `${groupName}${subGroupName}Role`, {
       assumedBy: new iam.AccountPrincipal(this.account),
       description: 'for group',
-      roleName: `${groupName}Role`,
-      managedPolicies: [new iam.ManagedPolicy(this, `${groupName}RoleManagedPolicy`, {
-        managedPolicyName: `${groupName}RoleManagedPolicy`,
+      roleName: `${groupName}${subGroupName}Role`,
+      managedPolicies: [new iam.ManagedPolicy(this, `${groupName}${subGroupName}RoleManagedPolicy`, {
+        managedPolicyName: `${groupName}${subGroupName}RoleManagedPolicy`,
         statements: [new iam.PolicyStatement({
           actions: ['s3:getObject'],
-          resources: ["arn:aws:s3:::test-miyamoto-bucket/${aws:PrincipalTag/Div}/*"]
+          resources: [
+            "arn:aws:s3:::test-miyamoto-bucket/${aws:PrincipalTag/Div}/*",
+            "arn:aws:s3:::test-miyamoto-bucket/${aws:PrincipalTag/SubDiv}/*"
+          ]
         }),
         new iam.PolicyStatement({
           actions: ['s3:ListBucket', "s3:ListAllMyBuckets"],
@@ -81,6 +81,7 @@ export class IamResourceStack extends Stack {
       })]
     });
     Tags.of(role).add("Div", groupName)
+    Tags.of(role).add("SubDiv", subGroupName)
     return role
   }
 

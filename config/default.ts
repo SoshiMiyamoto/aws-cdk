@@ -16,10 +16,12 @@ export = {
         "group":{
             "group-a":[
                 "test.miyamotoA",
-                "test.miyamotoAB"
+                "test.miyamotoA1"
             ],
             "group-b":[
-                "test.miyamotoB",
+                "test.miyamotoB"
+            ],
+            "group-a/group-b":[
                 "test.miyamotoAB"
             ]
         }
